@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+	 <!--Cognito JavaScript-->
+	<script src="js/amazon-cognito-identity.min.js"></script>  
+	<script src="js/config.js"></script>
+  </head>
+
+  <body>
+	<div class="container">
+     
+	
+	<div>
+
+		<h4>User Information</h4>
+		
+		<hr/><br>
+		<div>
+			<label>Email <span>(Username)</span></label>
+		</div>
+		<div>
+			<label id="email_value"></label>
+		</div>
+
+		<hr/><br>
+		<div>
+			<label>User Name </label>
+		</div>
+		<div>
+			<label id="Name"></label>
+		</div>
+		
+		<hr/><br>
+		<div>
+			<label>Given Name</label>
+		</div>
+		<div>
+			<label id="given_Name"></label>
+		</div>
+
+		<hr/><br>
+		<div>
+			<label> Middle Name</label>
+		</div>
+		<div>
+			<label id="middle_Name"></label>
+		</div>
+
+		<hr/><br>
+		<div>
+			<label> Family Name</label>
+		</div>
+		<div>
+			<label id="family_Name"></label>
+		</div>
+		
+    </div>
+
+    <script>
+	var data = { 
+		UserPoolId : _config.cognito.userPoolId,
+        ClientId : _config.cognito.clientId
+    };
+    var userPool = new AmazonCognitoIdentity.CognitoUserPool(data);
+    var cognitoUser = userPool.getCurrentUser();
+	
+	window.onload = function(){
+    if (cognitoUser != null) {
+        cognitoUser.getSession(function(err, session) {
+            if (err) {
+                alert(err);
+                return;
+            }
+            console.log('session validity: ' + session.isValid());
+			//Set the profile info
+			cognitoUser.getUserAttributes(function(err, result) {
+				if (err) {
+					console.log(err);
+					return;
+				}
+				console.log(result);
+				document.getElementById("email_value").innerHTML = result[7].getValue();	
+				document.getElementById("Name").innerHTML = result[3].getValue();	
+				document.getElementById("given_Name").innerHTML = result[4].getValue();
+				document.getElementById("middle_Name").innerHTML = result[5].getValue(); 
+				document.getElementById("family_Name").innerHTML = result[6].getValue();
+			});			
+			
+        });
+    }
+}
+
+    </script>
+  </body>
+</html>
